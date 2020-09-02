@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ofertas_app/home.page.dart';
+import 'package:ofertas_app/login.page.dart';
 
 void main() {
   runApp(MyApp()); // Qual é a classe que será carregada (exibida).
@@ -7,9 +9,12 @@ void main() {
 class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Text(
-        "Hello World",
-      ),
+      // home: LoginPage(),
+      routes: {
+        '/': (context) => LoginPage(),
+        '/home': (context) => HomePage(),
+      },
+      initialRoute: '/',
     );
   }
 }
