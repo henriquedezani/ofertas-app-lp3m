@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
         '/cadastro': (context) => CadastroPage(),
       },
       initialRoute: '/',
+      debugShowCheckedModeBanner: false,
     );
   }
 }
