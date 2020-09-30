@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+class RegistroPage extends StatelessWidget {
   var _formKey = GlobalKey<FormState>();
 
   @override
@@ -16,15 +16,22 @@ class LoginPage extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
-                  SizedBox(
-                    // width: double.infinity,
-                    // height: 200,
-                    child: Image.network(
-                      "https://via.placeholder.com/240x200.png?text=Logo",
-                      // fit: BoxFit.cover,
+                  CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Colors.grey[300],
+                    child: Icon(Icons.camera_alt, size: 70),
+                  ),
+                  Text("Clique para alterar"),
+                  SizedBox(height: 50),
+                  TextFormField(
+                    validator: (value) =>
+                        value.isEmpty ? "Campo obrigatório" : null,
+                    decoration: InputDecoration(
+                      labelText: "Nome",
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 8),
                   TextFormField(
                     validator: (value) =>
                         value.isEmpty ? "Campo obrigatório" : null,
@@ -51,11 +58,11 @@ class LoginPage extends StatelessWidget {
                     height: 50,
                     child: RaisedButton(
                       onPressed: () {
-                        if (_formKey.currentState.validate())
-                          Navigator.of(context).pushNamed('/home');
+                        if (_formKey.currentState.validate()) {}
+                        // Navigator.of(context).pushNamed('/home');
                       },
                       child: Text(
-                        "Entrar",
+                        "Registrar",
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -66,11 +73,11 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("Não tem cadastro?"),
+                      Text("Já tem conta?"),
                       FlatButton(
                         padding: EdgeInsets.all(0),
                         onPressed: () {
-                          Navigator.of(context).pushNamed('/registro');
+                          Navigator.of(context).pop();
                         },
                         child: Text(
                           "Clique aqui.",
