@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ofertas_app/models/oferta.model.dart';
 
 class ItemOferta extends StatelessWidget {
+  final Oferta oferta;
+
+  ItemOferta(this.oferta);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -46,7 +51,7 @@ class ItemOferta extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Computador Dell Vostro 1400, Intel i9, 16GB RAM e 1TB SSD",
+                        oferta.nome,
                         softWrap: true,
                         style: TextStyle(
                           fontSize: 16,
@@ -54,7 +59,7 @@ class ItemOferta extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "www.kabum.com.br",
+                        oferta.empresa,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[700],
@@ -67,13 +72,15 @@ class ItemOferta extends StatelessWidget {
                             width: 6,
                           ),
                           Text(
-                            "(1230)",
+                            oferta.likes.toString() == "0"
+                                ? "Seja o primeiro a curtir"
+                                : oferta.likes.toString(),
                             style: TextStyle(fontSize: 10),
                           ),
                         ],
                       ),
                       Text(
-                        "R\$ 1560,00",
+                        "R\$ ${oferta.preco}",
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                         ),

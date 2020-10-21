@@ -1,7 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CadastroPage extends StatelessWidget {
   var formKey = GlobalKey<FormState>();
+
+  final FirebaseFirestore database = FirebaseFirestore.instance;
+
+  String nome;
+  String empresa;
+  double preco;
+  String descricao;
+  String uid = "123";
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +24,19 @@ class CadastroPage extends StatelessWidget {
             icon: Icon(Icons.save),
             onPressed: () {
               if (formKey.currentState.validate()) {
-                // TODO: Salvar os dados no banco de dados (Firestore)
-                // TODO: Mostrar uma mensagem de sucesso.
+                // invocar os métodos onSave de cada TextFormField:
+                formKey.currentState.save();
+
+                // ~ INSERT INTO Ofertas VALUES (nome, empresa, preco, de...)
+                database.collection('ofertas').add({
+                  "nome": nome,
+                  "empresa": empresa,
+                  "preco": preco,
+                  "descricao": descricao,
+                  "uid": uid,
+                  "avaliacao": 0,
+                });
+
                 Navigator.of(context).pop();
               }
             },
@@ -36,14 +56,7 @@ class CadastroPage extends StatelessWidget {
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: "Nome",
-                    enabledBorder: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red),
-                    ),
+                    border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value.isEmpty) {
@@ -52,25 +65,23 @@ class CadastroPage extends StatelessWidget {
                       return null;
                     }
                   },
-                  autovalidate: false,
+                  onSaved: (value) => nome = value,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: "Loja",
-                    enabledBorder: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                   ),
                   validator: (value) =>
                       value.isEmpty ? 'Campo obrigatório' : null,
-                  autovalidate: false,
+                  onSaved: (value) => empresa = value,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: "Preço",
-                    enabledBorder: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value.isEmpty) return "Campo Obrigatório";
@@ -81,26 +92,23 @@ class CadastroPage extends StatelessWidget {
 
                     return null;
                   },
-                  autovalidate: false,
+                  onSaved: (value) => preco = double.tryParse(value),
                   keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: "Descrição",
-                    enabledBorder: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[200]),
-                    ),
+                    border: OutlineInputBorder(),
                     // prefixIcon: Icon(Icons.person),
                     // suffixIcon: Icon(Icons.check),
                   ),
-                  minLines: 1,
+                  minLines: 3,
                   maxLines: 5,
-                  maxLength: 10,
+                  // maxLength: 10,
                   enabled: true,
                   keyboardType: TextInputType.multiline,
+                  onSaved: (value) => descricao = value,
                 ),
               ],
             ),

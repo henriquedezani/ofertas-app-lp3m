@@ -5,23 +5,34 @@
 
 import 'package:flutter/material.dart';
 import 'package:ofertas_app/itemoferta.widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ofertas_app/models/oferta.model.dart';
 
 class HomePage extends StatelessWidget {
+  final FirebaseFirestore database = FirebaseFirestore.instance; // singleton
+
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Ofertas"),
       ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          ItemOferta(),
-          ItemOferta(),
-          ItemOferta(),
-          ItemOferta(),
-          ItemOferta(),
-          ItemOferta(),
-        ],
+      body: StreamBuilder<QuerySnapshot>(
+        stream: database.collection('ofertas').orderBy('nome').snapshots(),
+        builder: (_, snapshot) {
+          if (!snapshot.hasData)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+
+          return ListView.builder(
+            itemCount: snapshot.data.docs.length,
+            itemBuilder: (context, index) {
+              Oferta _oferta =
+                  Oferta.fromJson(snapshot.data.docs[index].data());
+              return ItemOferta(_oferta);
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         // backgroundColor: Theme.of(context).primaryColor,
