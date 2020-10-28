@@ -9,15 +9,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ofertas_app/models/oferta.model.dart';
 
 class HomePage extends StatelessWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseFirestore database = FirebaseFirestore.instance; // singleton
 
   Widget build(BuildContext context) {
     return new Scaffold(
+      key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text("Ofertas"),
       ),
       body: StreamBuilder<QuerySnapshot>(
+        // stream: conexão em tempo real com a base de dados (dados)
         stream: database.collection('ofertas').orderBy('nome').snapshots(),
+        // builder:  o que eu vou desenhar na tela com os dados atualizados em tempo real.
         builder: (_, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -27,9 +31,9 @@ class HomePage extends StatelessWidget {
           return ListView.builder(
             itemCount: snapshot.data.docs.length,
             itemBuilder: (context, index) {
-              Oferta _oferta =
-                  Oferta.fromJson(snapshot.data.docs[index].data());
-              return ItemOferta(_oferta);
+              Oferta _oferta = Oferta.fromJson(snapshot.data.docs[index].id,
+                  snapshot.data.docs[index].data());
+              return ItemOferta(_scaffoldKey, _oferta);
             },
           );
         },

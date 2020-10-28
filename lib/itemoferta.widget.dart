@@ -1,20 +1,70 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ofertas_app/models/oferta.model.dart';
 
 class ItemOferta extends StatelessWidget {
+  FirebaseFirestore _database = FirebaseFirestore.instance;
   final Oferta oferta;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
-  ItemOferta(this.oferta);
+  ItemOferta(this.scaffoldKey, this.oferta);
+
+  void confirmaExclusao(BuildContext context, String id) {
+    final _dialog = AlertDialog(
+      title: Text("Confirma a exclusão?"),
+      actions: [
+        FlatButton(
+          child: Text("Cancelar"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        RaisedButton(
+          color: Colors.red,
+          child: Text(
+            "Confirmar",
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            // ~ DELETE FROM Ofertas WHERE id = <123>
+            _database.collection('ofertas').doc(oferta.id).delete();
+            Navigator.of(context).pop();
+          },
+        )
+      ],
+    );
+    showDialog(context: context, child: _dialog);
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed("/detalhe");
+        Navigator.of(context).pushNamed("/detalhe", arguments: oferta.id);
       },
-      // onLongPress: () {
-      //   Navigator.of(context).pushNamed("/cadastro");
-      // },
+      onLongPress: () {
+        scaffoldKey.currentState.showBottomSheet((context) => Container(
+            height: 120,
+            color: Colors.white,
+            child: ListView(
+              children: [
+                ListTile(
+                  title: Text("Editar"),
+                  leading: Icon(Icons.edit),
+                  onTap: () {
+                    // TODO: Desafio -> Implementar uma tela de edição de oferta.
+                    // Valendo 1 ponto na média.
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ListTile(
+                  title: Text("Apagar", style: TextStyle(color: Colors.red)),
+                  leading: Icon(Icons.delete, color: Colors.red),
+                  onTap: () => confirmaExclusao(context, oferta.id),
+                )
+              ],
+            )));
+      },
       child: Container(
         margin: EdgeInsets.fromLTRB(12, 12, 12, 0),
         padding: EdgeInsets.all(8),
@@ -130,3 +180,16 @@ class ItemOferta extends StatelessWidget {
     );
   }
 }
+
+/*
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+FirebaseFirestore _database = FirebaseFirestore.instance;
+
+Stream = _database.collection('ofertas').snapshots(); // SELECT (em tempo real)
+Future = _database.collection('ofertas').get(); // SELECT (única vez)
+_database.collection('ofertas').add({"nome": ..., }); // INSERT
+_database.collection('ofertas').doc(documentID).delete(); // DELETE
+_database.collection('ofertas').doc(documentID).update({"nome": ..., }); // UPADTE
+
+*/
