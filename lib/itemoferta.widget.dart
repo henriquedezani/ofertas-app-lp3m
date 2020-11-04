@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ofertas_app/models/oferta.model.dart';
 
 class ItemOferta extends StatelessWidget {
   FirebaseFirestore _database = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   final Oferta oferta;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
@@ -43,27 +45,32 @@ class ItemOferta extends StatelessWidget {
         Navigator.of(context).pushNamed("/detalhe", arguments: oferta.id);
       },
       onLongPress: () {
-        scaffoldKey.currentState.showBottomSheet((context) => Container(
-            height: 120,
-            color: Colors.white,
-            child: ListView(
-              children: [
-                ListTile(
-                  title: Text("Editar"),
-                  leading: Icon(Icons.edit),
-                  onTap: () {
-                    // TODO: Desafio -> Implementar uma tela de edição de oferta.
-                    // Valendo 1 ponto na média.
-                    Navigator.of(context).pop();
-                  },
-                ),
-                ListTile(
-                  title: Text("Apagar", style: TextStyle(color: Colors.red)),
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  onTap: () => confirmaExclusao(context, oferta.id),
-                )
-              ],
-            )));
+        if (_auth.currentUser.uid == oferta.uid) {
+          scaffoldKey.currentState.showBottomSheet(
+            (context) => Container(
+              height: 120,
+              color: Colors.white,
+              child: ListView(
+                children: [
+                  ListTile(
+                    title: Text("Editar"),
+                    leading: Icon(Icons.edit),
+                    onTap: () {
+                      // TODO: Desafio -> Implementar uma tela de edição de oferta.
+                      // Valendo 1 ponto na média.
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  ListTile(
+                    title: Text("Apagar", style: TextStyle(color: Colors.red)),
+                    leading: Icon(Icons.delete, color: Colors.red),
+                    onTap: () => confirmaExclusao(context, oferta.id),
+                  )
+                ],
+              ),
+            ),
+          );
+        }
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(12, 12, 12, 0),
@@ -157,7 +164,7 @@ class ItemOferta extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Fulano da Silva Xavier Andrade",
+                        oferta.nomeUsuario,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                         ),

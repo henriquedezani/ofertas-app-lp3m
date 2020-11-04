@@ -7,6 +7,7 @@ class Oferta {
   double avaliacao;
   String descricao;
   int likes;
+  String nomeUsuario;
 
   Oferta(
       {this.id, this.nome, this.empresa, this.preco, this.uid, this.avaliacao});
@@ -20,6 +21,7 @@ class Oferta {
     this.avaliacao = json['avaliacao'];
     this.descricao = json['descricao'] ?? '';
     this.likes = json['likes'] ?? 0;
+    this.nomeUsuario = json['nomeUsuario'] ?? '';
     // this.likes = json['likes'] != null ? json['likes'] : 0; // if ternário
   }
 }

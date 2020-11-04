@@ -1,12 +1,34 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegistroPage extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String nome, email, senha;
+
   var _formKey = GlobalKey<FormState>();
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String exibeErroEmPortugues(String code) {
+    switch (code) {
+      case "email-already-in-use":
+        return "Já existe um usuário com este e-mail.";
+      case "invalid-email":
+        return "E-mail inválido.";
+      case "operation-not-allowed":
+        return "Operação não permitida. Verifique com o admin.";
+      case "weak-password":
+        return "Senha fraca. Refaça.";
+      default:
+        return "Ops, aconteceu um erro.";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     double larguraTela = MediaQuery.of(context).size.width;
     return Scaffold(
+      key: _scaffoldKey,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -30,6 +52,7 @@ class RegistroPage extends StatelessWidget {
                       labelText: "Nome",
                       border: OutlineInputBorder(),
                     ),
+                    onSaved: (value) => nome = value,
                   ),
                   SizedBox(height: 8),
                   TextFormField(
@@ -40,6 +63,7 @@ class RegistroPage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       // labelStyle: TextStyle(color: Colors.red),
                     ),
+                    onSaved: (value) => email = value,
                     // style: TextStyle(color: Colors.green),
                   ),
                   SizedBox(height: 8),
@@ -50,6 +74,7 @@ class RegistroPage extends StatelessWidget {
                       labelText: "Senha",
                       border: OutlineInputBorder(),
                     ),
+                    onSaved: (value) => senha = value,
                     obscureText: true,
                   ),
                   SizedBox(height: 8),
@@ -57,9 +82,23 @@ class RegistroPage extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: RaisedButton(
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {}
-                        // Navigator.of(context).pushNamed('/home');
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          _formKey.currentState.save();
+                          try {
+                            var credentials =
+                                await _auth.createUserWithEmailAndPassword(
+                                    email: email, password: senha);
+                            await credentials.user
+                                .updateProfile(displayName: nome);
+                            Navigator.of(context).pushNamed('/home');
+                          } on FirebaseAuthException catch (ex) {
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(exibeErroEmPortugues(ex.code)),
+                            ));
+                          }
+                        }
                       },
                       child: Text(
                         "Registrar",

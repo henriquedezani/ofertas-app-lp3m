@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CadastroPage extends StatelessWidget {
   var formKey = GlobalKey<FormState>();
 
   final FirebaseFirestore database = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String nome;
   String empresa;
   double preco;
   String descricao;
-  String uid = "123";
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +28,16 @@ class CadastroPage extends StatelessWidget {
                 // invocar os métodos onSave de cada TextFormField:
                 formKey.currentState.save();
 
+                User user = _auth.currentUser;
+
                 // ~ INSERT INTO Ofertas VALUES (nome, empresa, preco, de...)
                 database.collection('ofertas').add({
                   "nome": nome,
                   "empresa": empresa,
                   "preco": preco,
                   "descricao": descricao,
-                  "uid": uid,
+                  "uid": user.uid,
+                  "nomeUsuario": user.displayName,
                   "avaliacao": 0,
                 });
 
