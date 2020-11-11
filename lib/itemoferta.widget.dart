@@ -48,16 +48,16 @@ class ItemOferta extends StatelessWidget {
         if (_auth.currentUser.uid == oferta.uid) {
           scaffoldKey.currentState.showBottomSheet(
             (context) => Container(
-              height: 120,
+              height: 180,
               color: Colors.white,
               child: ListView(
                 children: [
                   ListTile(
                     title: Text("Editar"),
                     leading: Icon(Icons.edit),
-                    onTap: () {
-                      // TODO: Desafio -> Implementar uma tela de edição de oferta.
-                      // Valendo 1 ponto na média.
+                    onTap: () async {
+                      await Navigator.of(context)
+                          .pushNamed("/edicao", arguments: oferta);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -65,6 +65,13 @@ class ItemOferta extends StatelessWidget {
                     title: Text("Apagar", style: TextStyle(color: Colors.red)),
                     leading: Icon(Icons.delete, color: Colors.red),
                     onTap: () => confirmaExclusao(context, oferta.id),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title:
+                        Text("Cancelar", style: TextStyle(color: Colors.red)),
+                    // leading: Icon(Icons.delete, color: Colors.red),
+                    onTap: () => Navigator.of(context).pop(),
                   )
                 ],
               ),
@@ -113,6 +120,7 @@ class ItemOferta extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          color: Colors.red,
                         ),
                       ),
                       Text(

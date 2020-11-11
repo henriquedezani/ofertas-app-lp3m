@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ofertas_app/edicao.page.dart';
 import 'package:ofertas_app/login.page.dart';
 import 'package:ofertas_app/home.page.dart';
 import 'package:ofertas_app/detalhe.page.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/detalhe': (context) => DetalhePage(),
         '/cadastro': (context) => CadastroPage(),
+        '/edicao': (context) => EdicaoPage(),
       },
       initialRoute: '/',
       debugShowCheckedModeBanner: false,
